@@ -1,13 +1,13 @@
-package springboothelloworld;
+package springbooturlshortenerservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringBootHelloWorldApplication {
+public class SpringBootUrlShortenerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringBootHelloWorldApplication.class, args);
+		SpringApplication.run(SpringBootUrlShortenerApplication.class, args);
 	}
 
 }
