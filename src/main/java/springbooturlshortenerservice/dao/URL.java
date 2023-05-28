@@ -1,6 +1,11 @@
 package springbooturlshortenerservice.dao;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 
 @Entity
@@ -16,8 +21,8 @@ public class URL {
     private String longUrl;
 
 
-    @Column(name = "shortURL")
-    private String shortUrl;
+    @Column(name = "shortID")
+    private String shortID;
 
     // Constructors, getters, and setters
 
@@ -38,12 +43,12 @@ public class URL {
         this.longUrl = longUrl;
     }
 
-    public String getShortUrl() {
-        return shortUrl;
+    public String getShortID() {
+        return shortID;
     }
 
-    public void setShortUrl(String shortUrl) {
-        this.shortUrl = shortUrl;
+    public void setShortID(String shortID) {
+        this.shortID = shortID;
     }
 }
 

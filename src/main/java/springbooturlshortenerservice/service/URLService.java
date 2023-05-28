@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service;
 import springbooturlshortenerservice.dao.URLRepository;
 import springbooturlshortenerservice.dao.URL;
 import org.hashids.Hashids;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 
 @Service
 public class URLService {
     private final URLRepository urlRepository;
+    private final String shortCode = this.generateShortCode();;
 
     @Autowired
     public URLService(URLRepository urlRepository) {
@@ -19,20 +22,27 @@ public class URLService {
         URL url = urlRepository.findByLongUrl(longUrl);
 
         if (url != null) {
-            return url.getShortUrl();
+            return url.getShortID();
         } else {
             String shortUrl = generateShortUrl();
             url = new URL();
             url.setLongUrl(longUrl);
-            url.setShortUrl(shortUrl);
+
+            url.setShortID(shortCode);
             urlRepository.save(url);
             return shortUrl;
         }
     }
 
     private String generateShortUrl() {
-        String baseShortURL = "http://localhost:8080/";
-        String shortCode = generateShortCode();
+        // Get the current request URI
+        String currentUri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUriString();
+        // Get the current port number
+        int port = ServletUriComponentsBuilder.fromCurrentRequest().build().getPort();
+        // Generate the current port number URL
+        String baseShortURL = ServletUriComponentsBuilder.fromUriString(currentUri).port(port).build().toUriString();
+
+        //String baseShortURL = "http://localhost:8080/";
         return baseShortURL + shortCode;
     }
 
@@ -42,6 +52,6 @@ public class URLService {
         Hashids hashids = new Hashids(SALT, MIN_LENGTH);
         long now = System.currentTimeMillis();
         return hashids.encode(now);
-        }
+    }
 }
 

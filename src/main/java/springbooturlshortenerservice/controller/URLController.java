@@ -18,9 +18,12 @@ public class URLController {
 
     @PostMapping("/shorten")
     public String shortenURL(@RequestBody String longURL) {
-        String shortURL = urlService.getOrCreateShortURL(longURL);
-        return shortURL;
+        return urlService.getOrCreateShortURL(longURL);
     }
+
+
+
+
 }
 
 
