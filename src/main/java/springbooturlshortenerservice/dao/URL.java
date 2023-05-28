@@ -1,11 +1,11 @@
-package springbooturlshortenerservice.controller;
+package springbooturlshortenerservice.dao;
 
 import javax.persistence.*;
 
 
 @Entity
 @Table(name = "urls")
-public class LongUrl {
+public class URL {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
