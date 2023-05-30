@@ -35,15 +35,10 @@ public class URLService {
     }
 
     private String generateShortUrl() {
-        // Get the current request URI
-        String currentUri = ServletUriComponentsBuilder.fromCurrentRequest().build().toUriString();
         // Get the current port number
         int port = ServletUriComponentsBuilder.fromCurrentRequest().build().getPort();
-        // Generate the current port number URL
-        String baseShortURL = ServletUriComponentsBuilder.fromUriString(currentUri).port(port).build().toUriString();
-
-        //String baseShortURL = "http://localhost:8080/";
-        return baseShortURL + shortCode;
+        String prefix = "http://localhost:" + port + "/";
+        return prefix + shortCode;
     }
 
     private String generateShortCode() {
