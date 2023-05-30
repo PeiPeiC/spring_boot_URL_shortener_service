@@ -11,7 +11,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @Service
 public class URLService {
     private final URLRepository urlRepository;
-    private final String shortCode = this.generateShortCode();;
+    private final String shortCode = this.generateShortCode();
+    ;
 
     @Autowired
     public URLService(URLRepository urlRepository) {
@@ -47,6 +48,36 @@ public class URLService {
         Hashids hashids = new Hashids(SALT, MIN_LENGTH);
         long now = System.currentTimeMillis();
         return hashids.encode(now);
+    }
+
+    public boolean deleteURLByShortUrl(String shortUrl) {
+        String shortID = extractShortIDFromURL(shortUrl);
+
+        URL url = urlRepository.findByShortID(shortID);
+
+        if (url != null) {
+            urlRepository.delete(url);
+            updateIdWithAscendingSequence();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void updateIdWithAscendingSequence() {
+        Iterable<URL> urls = urlRepository.findAll();
+        int id = 1;
+
+        for (URL url : urls) {
+            url.setId(id++);
+            urlRepository.save(url);
+        }
+    }
+
+    private String extractShortIDFromURL(String shortURL) {
+        // Assuming the shortID is at the end of the shortURL
+        String[] parts = shortURL.split("/");
+        return parts[parts.length - 1];
     }
 }
 
