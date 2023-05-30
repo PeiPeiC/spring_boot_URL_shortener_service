@@ -1,5 +1,13 @@
 package springbooturlshortenerservice.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +20,10 @@ import org.springframework.web.bind.annotation.RestController;
 import springbooturlshortenerservice.dao.URL;
 import springbooturlshortenerservice.dao.URLRepository;
 import springbooturlshortenerservice.service.URLService;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 @RestController
 public class URLController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(URLController.class);
     private final URLService urlService;
     private final URLRepository urlRepository;
 
@@ -32,6 +35,7 @@ public class URLController {
 
     @PostMapping("/shorten")
     public String shortenURL(@RequestBody String longURL) {
+        LOG.info("shorten request input: {}", longURL);
         return urlService.getOrCreateShortURL(longURL);
     }
 
@@ -40,13 +44,16 @@ public class URLController {
     @GetMapping("/{shortURL}")
     public void redirectToLongURL(HttpServletRequest request, HttpServletResponse response, @PathVariable("shortURL") String shortURL) throws IOException, ServletException {
         String shortID = extractShortIDFromURL(shortURL);
-
+        LOG.info("GET request shortID: {}", shortID);
         URL url = urlRepository.findByShortID(shortID);
 
         if (url != null) {
-            // Forward the request to the longURL
-            RequestDispatcher dispatcher = request.getRequestDispatcher(url.getLongUrl());
-            dispatcher.forward(request, response);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(url.getLongUrl());
+            String longUrl = jsonNode.get("longUrl").asText();
+            LOG.info("Redirecting to longURL: {}", longUrl);
+
+            response.sendRedirect(longUrl);
         } else {
             // ShortURL not found in the database
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "There is no such shortURL in the database.");

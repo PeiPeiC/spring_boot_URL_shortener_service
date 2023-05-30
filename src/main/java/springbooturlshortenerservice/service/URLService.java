@@ -1,6 +1,9 @@
 package springbooturlshortenerservice.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import springbooturlshortenerservice.dao.URLRepository;
 import springbooturlshortenerservice.dao.URL;
@@ -10,9 +13,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Service
 public class URLService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(URLService.class);
     private final URLRepository urlRepository;
     private final String shortCode = this.generateShortCode();
-    ;
+    private static final String prefix = "http://localhost:";
+
+    @Autowired
+    private Environment env;
 
     @Autowired
     public URLService(URLRepository urlRepository) {
@@ -37,9 +45,7 @@ public class URLService {
 
     private String generateShortUrl() {
         // Get the current port number
-        int port = ServletUriComponentsBuilder.fromCurrentRequest().build().getPort();
-        String prefix = "http://localhost:" + port + "/";
-        return prefix + shortCode;
+        return prefix + env.getProperty("server.port") + "/" + shortCode;
     }
 
     private String generateShortCode() {
@@ -80,4 +86,3 @@ public class URLService {
         return parts[parts.length - 1];
     }
 }
-
