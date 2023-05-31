@@ -3,6 +3,7 @@ package springbooturlshortenerservice.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,13 +34,19 @@ public class URLController {
         this.urlRepository = urlRepository;
     }
 
+//    @PostMapping("/shorten")
+//    public String shortenURL(@RequestBody String longURL) {
+//        LOG.info("shorten request input: {}", longURL);
+//        return urlService.getOrCreateShortURL(longURL);
+//    }
+
     @PostMapping("/shorten")
-    public String shortenURL(@RequestBody String longURL) {
+    public String shortenURL(@RequestBody Map<String, String> objectMap) {
+        String longURL = objectMap.get("longURL");
         LOG.info("shorten request input: {}", longURL);
+
         return urlService.getOrCreateShortURL(longURL);
     }
-
-
 
     @GetMapping("/{shortURL}")
     public void redirectToLongURL(HttpServletRequest request, HttpServletResponse response, @PathVariable("shortURL") String shortURL) throws IOException, ServletException {
