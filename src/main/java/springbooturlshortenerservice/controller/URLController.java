@@ -1,8 +1,7 @@
 package springbooturlshortenerservice.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springbooturlshortenerservice.dao.URL;
 import springbooturlshortenerservice.dao.URLRepository;
 import springbooturlshortenerservice.service.URLService;
+
 @RestController
 public class URLController {
 
@@ -34,11 +34,12 @@ public class URLController {
     }
 
     @PostMapping("/shorten")
-    public String shortenURL(@RequestBody String longURL) {
+    public String shortenURL(@RequestBody Map<String, String> objectMap) {
+        String longURL = objectMap.get("longURL");
         LOG.info("shorten request input: {}", longURL);
+
         return urlService.getOrCreateShortURL(longURL);
     }
-
 
 
     @GetMapping("/{shortURL}")
@@ -48,12 +49,8 @@ public class URLController {
         URL url = urlRepository.findByShortID(shortID);
 
         if (url != null) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(url.getLongUrl());
-            String longUrl = jsonNode.get("longUrl").asText();
-            LOG.info("Redirecting to longURL: {}", longUrl);
-
-            response.sendRedirect(longUrl);
+            LOG.info("Redirecting to longURL: {}", url.getLongUrl());
+            response.sendRedirect(url.getLongUrl());
         } else {
             // ShortURL not found in the database
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "There is no such shortURL in the database.");
@@ -78,6 +75,3 @@ public class URLController {
         return parts[parts.length - 1];
     }
 }
-
-
-

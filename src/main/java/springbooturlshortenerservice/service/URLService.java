@@ -1,14 +1,13 @@
 package springbooturlshortenerservice.service;
 
+import org.hashids.Hashids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import springbooturlshortenerservice.dao.URLRepository;
 import springbooturlshortenerservice.dao.URL;
-import org.hashids.Hashids;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import springbooturlshortenerservice.dao.URLRepository;
 
 
 @Service
@@ -16,7 +15,6 @@ public class URLService {
 
     private static final Logger LOG = LoggerFactory.getLogger(URLService.class);
     private final URLRepository urlRepository;
-    private final String shortCode = this.generateShortCode();
     private static final String prefix = "http://localhost:";
 
     @Autowired
@@ -31,21 +29,16 @@ public class URLService {
         URL url = urlRepository.findByLongUrl(longUrl);
 
         if (url != null) {
-            return url.getShortID();
+            LOG.info("getOrCreateShortURL - shortID {}", url.getShortID());
+            return prefix + env.getProperty("server.port") + "/" + url.getShortID();
         } else {
-            String shortUrl = generateShortUrl();
+            String shortCode = generateShortCode();
             url = new URL();
             url.setLongUrl(longUrl);
-
             url.setShortID(shortCode);
             urlRepository.save(url);
-            return shortUrl;
+            return prefix + env.getProperty("server.port") + "/" + shortCode;
         }
-    }
-
-    private String generateShortUrl() {
-        // Get the current port number
-        return prefix + env.getProperty("server.port") + "/" + shortCode;
     }
 
     private String generateShortCode() {
