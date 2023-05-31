@@ -50,5 +50,13 @@ public class URL {
     public void setShortID(String shortID) {
         this.shortID = shortID;
     }
+
+    @Override
+    public String toString() {
+        return "URL{" +
+                "longUrl='" + longUrl + '\'' +
+                ", shortID='" + shortID + '\'' +
+                '}';
+    }
 }
 

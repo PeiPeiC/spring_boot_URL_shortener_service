@@ -1,7 +1,5 @@
 package springbooturlshortenerservice.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springbooturlshortenerservice.dao.URL;
 import springbooturlshortenerservice.dao.URLRepository;
 import springbooturlshortenerservice.service.URLService;
+
 @RestController
 public class URLController {
 
@@ -55,12 +54,8 @@ public class URLController {
         URL url = urlRepository.findByShortID(shortID);
 
         if (url != null) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(url.getLongUrl());
-            String longUrl = jsonNode.get("longUrl").asText();
-            LOG.info("Redirecting to longURL: {}", longUrl);
-
-            response.sendRedirect(longUrl);
+            LOG.info("Redirecting to longURL: {}", url.getLongUrl());
+            response.sendRedirect(url.getLongUrl());
         } else {
             // ShortURL not found in the database
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "There is no such shortURL in the database.");
@@ -68,7 +63,7 @@ public class URLController {
     }
 
     @DeleteMapping("/{shortUrl}")
-    public ResponseEntity<String> deleteURL(@PathVariable("shortUrl") String shortUrl) {
+    public ResponseEntity<String> deleteURLByShortUrl(@PathVariable("shortUrl") String shortUrl) {
         boolean deleted = urlService.deleteURLByShortUrl(shortUrl);
 
         if (deleted) {
@@ -78,6 +73,19 @@ public class URLController {
         }
     }
 
+    @DeleteMapping("/id/{id}")
+    public ResponseEntity<String> deleteURLById(@PathVariable("id") Integer id) {
+        boolean deleted = urlService.deleteURLById(id);
+
+        if (deleted) {
+            return ResponseEntity.ok("URL successfully deleted");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL not found");
+        }
+    }
+
+
+
 
     private String extractShortIDFromURL(String shortURL) {
         // Assuming the shortID is at the end of the shortURL
@@ -85,6 +93,3 @@ public class URLController {
         return parts[parts.length - 1];
     }
 }
-
-
-
