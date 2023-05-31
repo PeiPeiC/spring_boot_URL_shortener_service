@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import springbooturlshortenerservice.dao.URL;
 import springbooturlshortenerservice.dao.URLRepository;
 import springbooturlshortenerservice.service.URLService;
 
+import static springbooturlshortenerservice.service.URLService.extractShortIDFromURL;
+
 @RestController
 public class URLController {
 
@@ -33,11 +36,6 @@ public class URLController {
         this.urlRepository = urlRepository;
     }
 
-//    @PostMapping("/shorten")
-//    public String shortenURL(@RequestBody String longURL) {
-//        LOG.info("shorten request input: {}", longURL);
-//        return urlService.getOrCreateShortURL(longURL);
-//    }
 
     @PostMapping("/shorten")
     public String shortenURL(@RequestBody Map<String, String> objectMap) {
@@ -65,10 +63,12 @@ public class URLController {
     @DeleteMapping("/{shortUrl}")
     public ResponseEntity<String> deleteURLByShortUrl(@PathVariable("shortUrl") String shortUrl) {
         boolean deleted = urlService.deleteURLByShortUrl(shortUrl);
-
+        LOG.info("deleted result {}", deleted);
         if (deleted) {
+            LOG.info("deleted result {}", true);
             return ResponseEntity.ok("URL successfully deleted");
         } else {
+            LOG.info("deleted result {}", false);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL not found");
         }
     }
@@ -76,20 +76,13 @@ public class URLController {
     @DeleteMapping("/id/{id}")
     public ResponseEntity<String> deleteURLById(@PathVariable("id") Integer id) {
         boolean deleted = urlService.deleteURLById(id);
-
+        LOG.info("deleted result {}", deleted);
         if (deleted) {
+            LOG.info("deleted result {}", true);
             return ResponseEntity.ok("URL successfully deleted");
         } else {
+            LOG.info("deleted result {}", false);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL not found");
         }
-    }
-
-
-
-
-    private String extractShortIDFromURL(String shortURL) {
-        // Assuming the shortID is at the end of the shortURL
-        String[] parts = shortURL.split("/");
-        return parts[parts.length - 1];
     }
 }

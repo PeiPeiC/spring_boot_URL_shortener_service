@@ -21,7 +21,8 @@ public class URL {
     private String longUrl;
 
 
-    @Column(name = "shortID")
+
+    @Column(name = "shortID", unique = true)
     private String shortID;
 
     // Constructors, getters, and setters

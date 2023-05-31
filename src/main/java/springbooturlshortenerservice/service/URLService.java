@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import springbooturlshortenerservice.dao.URL;
 import springbooturlshortenerservice.dao.URLRepository;
 
@@ -59,7 +58,6 @@ public class URLService {
         if (optionalURL.isPresent()) {
             URL deletedURL = optionalURL.get();
             urlRepository.deleteById(id);
-            updateIdWithAscendingSequence();
             return true;
         }
 
@@ -73,24 +71,14 @@ public class URLService {
 
         if (url != null) {
             urlRepository.delete(url);
-            updateIdWithAscendingSequence();
             return true;
         } else {
             return false;
         }
     }
 
-    private void updateIdWithAscendingSequence() {
-        Iterable<URL> urls = urlRepository.findAll();
-        int id = 1;
 
-        for (URL url : urls) {
-            url.setId(id++);
-            urlRepository.save(url);
-        }
-    }
-
-    private String extractShortIDFromURL(String shortURL) {
+    public static String extractShortIDFromURL(String shortURL) {
         // Assuming the shortID is at the end of the shortURL
         String[] parts = shortURL.split("/");
         return parts[parts.length - 1];
