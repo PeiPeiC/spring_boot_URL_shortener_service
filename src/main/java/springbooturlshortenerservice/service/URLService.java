@@ -16,16 +16,17 @@ import java.util.Optional;
 public class URLService {
 
     private static final Logger LOG = LoggerFactory.getLogger(URLService.class);
-    private final URLRepository urlRepository;
-    private static final String prefix = "http://localhost:";
-
+    @Autowired
+    private URLRepository urlRepository;
     @Autowired
     private Environment env;
+    private static final String prefix = "http://localhost:";
 
-    @Autowired
-    public URLService(URLRepository urlRepository) {
-        this.urlRepository = urlRepository;
-    }
+
+//    @Autowired
+//    public URLService(URLRepository urlRepository) {
+//        this.urlRepository = urlRepository;
+//    }
 
     public String getOrCreateShortURL(String longUrl) {
         URL url = urlRepository.findByLongUrl(longUrl);
