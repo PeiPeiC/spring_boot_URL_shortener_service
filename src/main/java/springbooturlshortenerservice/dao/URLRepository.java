@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface URLRepository extends CrudRepository<URL, Integer> {
+
     void deleteById(Integer id);
 
     URL findByShortID(String shortID);

@@ -20,7 +20,6 @@ class URLServiceTest {
     private static final String host = "http://localhost:8080";
     @InjectMocks
     private URLService undertest;
-
     @Mock
     private URLRepository urlRepository;
     @Mock
