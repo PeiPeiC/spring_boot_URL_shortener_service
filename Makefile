@@ -14,7 +14,7 @@ default:
 .PHONY: docker-up
 docker-up:
 	@echo "Run docker container - ${container}!"
-	docker-compose -f docker-compose.yaml up --build
+	docker compose -f docker-compose.yaml up -d
 
 .PHONY: docker-down
 docker-down: ## Stop docker containers and clear artefacts.

@@ -1,5 +1,6 @@
 package springbooturlshortenerservice.service;
 
+import java.util.Optional;
 import org.hashids.Hashids;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,23 +10,16 @@ import org.springframework.stereotype.Service;
 import springbooturlshortenerservice.dao.URL;
 import springbooturlshortenerservice.dao.URLRepository;
 
-import java.util.Optional;
-
 
 @Service
 public class URLService {
 
     private static final Logger LOG = LoggerFactory.getLogger(URLService.class);
-    private final URLRepository urlRepository;
-    private static final String prefix = "http://localhost:";
-
+    @Autowired
+    private URLRepository urlRepository;
     @Autowired
     private Environment env;
-
-    @Autowired
-    public URLService(URLRepository urlRepository) {
-        this.urlRepository = urlRepository;
-    }
+    private static final String prefix = "http://localhost:";
 
     public String getOrCreateShortURL(String longUrl) {
         URL url = urlRepository.findByLongUrl(longUrl);

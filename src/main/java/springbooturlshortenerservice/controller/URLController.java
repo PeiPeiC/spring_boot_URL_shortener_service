@@ -5,7 +5,6 @@ import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +26,10 @@ import static springbooturlshortenerservice.service.URLService.extractShortIDFro
 public class URLController {
 
     private static final Logger LOG = LoggerFactory.getLogger(URLController.class);
-    private final URLService urlService;
-    private final URLRepository urlRepository;
-
     @Autowired
-    public URLController(URLService urlService, URLRepository urlRepository) {
-        this.urlService = urlService;
-        this.urlRepository = urlRepository;
-    }
-
+    private URLService urlService;
+    @Autowired
+    private URLRepository urlRepository;
 
     @PostMapping("/shorten")
     public String shortenURL(@RequestBody Map<String, String> objectMap) {
